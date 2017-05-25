@@ -90,3 +90,8 @@ The MIT License (MIT). Please see [License File](LICENSE) for more information.
 [link-author]: https://github.com/thgh
 [link-contributors]: ../../contributors
 [rollup-plugin-serve]: https://www.npmjs.com/package/rollup-plugin-serve
+
+
+## 为什么要fork
+
+> 增加 index 入口指定

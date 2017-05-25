@@ -12,6 +12,8 @@ export default function serve (options = {}) {
   options.contentBase = Array.isArray(options.contentBase) ? options.contentBase : [options.contentBase]
   options.host = options.host || 'localhost'
   options.port = options.port || 10001
+  // 入口文件
+  options.index = options.index || 'index.html'
 
   mime.default_type = 'text/plain'
 
@@ -19,7 +21,7 @@ export default function serve (options = {}) {
     // Remove querystring
     const urlPath = request.url.split('?')[0]
 
-    readFileFromContentBase(options.contentBase, urlPath, function (error, content, filePath) {
+    readFileFromContentBase(options.contentBase, urlPath, options.index, function (error, content, filePath) {
       if (!error)  {
         return found(response, filePath, content)
       }
@@ -41,7 +43,7 @@ export default function serve (options = {}) {
           }
         })
       } else if (options.historyApiFallback) {
-        filePath = resolve(options.contentBase, 'index.html')
+        filePath = resolve(options.contentBase, options.index)
         readFile(filePath, function (error, content) {
           if (error) {
             notFound(response, filePath)
@@ -78,18 +80,18 @@ export default function serve (options = {}) {
   }
 }
 
-function readFileFromContentBase (contentBase, urlPath, callback) {
+function readFileFromContentBase (contentBase, urlPath, index, callback) {
   let filePath = resolve(contentBase[0] || '.', '.' + urlPath)
 
   // Load index.html in directories
   if (urlPath.endsWith('/')) {
-    filePath = resolve(filePath, 'index.html')
+    filePath = resolve(filePath, index)
   }
 
   readFile(filePath, (error, content) => {
     if (error && contentBase.length > 1) {
       // Try to read from next contentBase
-      readFileFromContentBase(contentBase.slice(1), urlPath, callback)
+      readFileFromContentBase(contentBase.slice(1), urlPath, index, callback)
     } else {
       // We know enough
       callback(error, content, filePath)
